@@ -1,0 +1,53 @@
+.weather-icon {
+  width: 100px;
+  height: 100px;
+}
+
+.weather-cloud {
+  @extend .weather-icon;
+  background-image: url('/assets/images/icons/Cloud.svg');
+}
+
+.weather-cloud-drizzle {
+  @extend .weather-icon;
+  background-image: url('/assets/images/icons/Cloud-Drizzle.svg');
+}
+
+.weather-cloud-fog {
+  @extend .weather-icon;
+  background-image: url('/assets/images/icons/Cloud-Fog.svg');
+}
+
+.weather-cloud-hail {
+  @extend .weather-icon;
+  background-image: url('/assets/images/icons/Cloud-Hail.svg');
+}
+
+.weather-cloud-moon {
+  @extend .weather-icon;
+  background-image: url('/assets/images/icons/Cloud-Moon.svg');
+}
+
+.weather-cloud-snow-alt {
+  @extend .weather-icon;
+  background-image: url('/assets/images/icons/Cloud-Snow-Alt.svg');
+}
+
+.weather-moon {
+  @extend .weather-icon;
+  background-image: url('/assets/images/icons/Moon.svg');
+}
+
+.weather-sun {
+  @extend .weather-icon;
+  background-image: url('/assets/images/icons/Sun.svg');
+}
+
+.weather-wind {
+  @extend .weather-icon;
+  background-image: url('/assets/images/icons/Wind.svg');
+}
+
+
+
+
