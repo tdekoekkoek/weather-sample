@@ -1,4 +1,4 @@
-interface Hour {
+export interface Hour {
   datetime: string;
   datetimeEpoch: number;
   temp: number;

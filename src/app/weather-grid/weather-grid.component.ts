@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import {WeatherService} from "../core/weather.service";
-import {RootObject, WeatherRoot} from "../core/model/weather.model";
 import {CommonModule} from "@angular/common";
-import {Day, VCRoot} from "../core/model/visual-crossing.model";
+import {Day} from "../core/model/visual-crossing.model";
 
 @Component({
   selector: 'app-weather-grid',
