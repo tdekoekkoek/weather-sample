@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import {WeatherService} from "../core/weather.service";
 import {RootObject, WeatherRoot} from "../core/model/weather.model";
 import {CommonModule} from "@angular/common";
-import {VCRoot} from "../core/model/visual-crossing.model";
+import {Day, VCRoot} from "../core/model/visual-crossing.model";
 
 @Component({
   selector: 'app-weather-grid',
@@ -12,15 +12,15 @@ import {VCRoot} from "../core/model/visual-crossing.model";
   styleUrl: './weather-grid.component.scss'
 })
 export class WeatherGridComponent {
-  weather!: VCRoot;
+  weatherDays: Array<Day> = [];
 
   constructor(private weatherService: WeatherService) {
 
   }
 
   ngOnInit() {
-    this.weatherService.fetchWeather3().subscribe(result => {
-      this.weather = result;
+    this.weatherService.fetchWeatherTS(new Date(), 4).subscribe(result => {
+      this.weatherDays = result;
     });
   }
 }

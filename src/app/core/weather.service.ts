@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import {Observable, of} from "rxjs";
-import {RootObject, WeatherRoot} from "./model/weather.model";
+import {map, Observable, of} from "rxjs";
+import {WeatherRoot} from "./model/weather.model";
 import {HttpClient} from "@angular/common/http";
-import {fromFetch} from "rxjs/internal/observable/dom/fetch";
 import {Day, VCRoot} from "./model/visual-crossing.model";
 import {WeatherInfo} from "./model/weather-info";
 import {WeatherAdapter} from "./weather-adapter";
 
+const VC_WEATHER_SERVICE = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline';
 const TOMORROW_API = 'https://api.tomorrow.io/v4/weather/forecast?location=42.3478,-71.0466';
 const API_KEY = 'dViBJCwSjXzGZutXQxSbb4TsIC0S3Te6';
 
@@ -17,82 +17,65 @@ export class WeatherService {
 
   constructor(private http: HttpClient) { }
 
-  // createUrl = ({ url, query = {} }) => {
-  //   const urlBuilder = new URL(url);
+  // fetchWeather(): Observable<WeatherRoot> {
+  //   const url = `${TOMORROW_API}&apikey=${API_KEY}`;
   //
-  //   Object.entries(query).forEach(([key, value]) => {
-  //     if (value == null) {
-  //       return;
-  //     }
+  //   // const url = this.createUrl({
+  //   //   url: 'https://api.tomorrow.io/v4/timelines',
+  //   //   query: {
+  //   //     API_KEY,
+  //   //     // location: `${lat},${lon}`,
+  //   //     units: 'metric',
+  //   //     // startTime,
+  //   //     // endTime,
+  //   //     timesteps: 'current,1h',
+  //   //     fields: 'precipitationIntensity,temperature,temperatureApparent,weatherCode',
+  //   //   }
+  //   // });
+  //   return this.http.get<WeatherRoot>(url);
+  // }
   //
-  //     if (Array.isArray(value)) {
-  //       value.forEach((val) => urlBuilder.searchParams.append(key, val));
-  //       return;
-  //     }
+  // fetchWeather2(): Observable<any> {
+  //   const options = {
+  //     method: 'POST',
+  //     headers: {
+  //       accept: 'application/json',
+  //       'Accept-Encoding': 'gzip',
+  //       'content-type': 'application/json'
+  //     },
+  //     body: JSON.stringify({
+  //       location: '42.3478, -71.0466',
+  //       fields: ['temperature'],
+  //       units: 'metric',
+  //       timesteps: ['2h'],
+  //       startTime: 'now',
+  //       endTime: 'nowPlus6h'
+  //     })
+  //   };
   //
-  //     urlBuilder.searchParams.append(key, value);
-  //   });
-  //
-  //   return urlBuilder.toString();
-  // };
+  //   fetch('https://api.tomorrow.io/v4/timelines?apikey=dViBJCwSjXzGZutXQxSbb4TsIC0S3Te6', options)
+  //      .then(response => response.json())
+  //      .then(response => console.log(response))
+  //   return of({})
+  //   // return fromFetch('https://api.tomorrow.io/v4/timelines?apikey=dViBJCwSjXzGZutXQxSbb4TsIC0S3Te6', options)
+  // }
 
-  fetchWeather(): Observable<WeatherRoot> {
-    const url = `${TOMORROW_API}&apikey=${API_KEY}`;
-
-    // const url = this.createUrl({
-    //   url: 'https://api.tomorrow.io/v4/timelines',
-    //   query: {
-    //     API_KEY,
-    //     // location: `${lat},${lon}`,
-    //     units: 'metric',
-    //     // startTime,
-    //     // endTime,
-    //     timesteps: 'current,1h',
-    //     fields: 'precipitationIntensity,temperature,temperatureApparent,weatherCode',
-    //   }
-    // });
-    return this.http.get<WeatherRoot>(url);
+  fetchWeatherTS(startDate: Date, numDays: number): Observable<Array<Day>> {
+    const stopDate = new Date();
+    stopDate.setDate(startDate.getDate() + numDays);
+    const location = 'Utrecht';
+    const sStartDate = this.formatDate(startDate);
+    const sStopDate = this.formatDate(stopDate);
+    const url = `${VC_WEATHER_SERVICE}/${location}/${sStartDate}/${sStopDate}?unitGroup=metric&key=2P39G8YSJ2V9WTFNQSKNEHD9Q&contentType=json`;
+    return this.http.get<VCRoot>(url)
+      .pipe(map(root => root.days));
   }
 
-  fetchWeather2(): Observable<any> {
-    const options = {
-      method: 'POST',
-      headers: {
-        accept: 'application/json',
-        'Accept-Encoding': 'gzip',
-        'content-type': 'application/json'
-      },
-      body: JSON.stringify({
-        location: '42.3478, -71.0466',
-        fields: ['temperature'],
-        units: 'metric',
-        timesteps: ['2h'],
-        startTime: 'now',
-        endTime: 'nowPlus6h'
-      })
-    };
-
-    fetch('https://api.tomorrow.io/v4/timelines?apikey=dViBJCwSjXzGZutXQxSbb4TsIC0S3Te6', options)
-       .then(response => response.json())
-       .then(response => console.log(response))
-    return of({})
-    // return fromFetch('https://api.tomorrow.io/v4/timelines?apikey=dViBJCwSjXzGZutXQxSbb4TsIC0S3Te6', options)
-  }
-
-  fetchWeather3(): Observable<VCRoot> {
-    // const url = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/Utrecht?unitGroup=metric&key=2P39G8YSJ2V9WTFNQSKNEHD9Q&contentType=json';
-    const startDate = '2024-06-06';
-    const endDate = '2024-06-13';
-    const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/Utrecht/${startDate}/${endDate}?unitGroup=metric&key=2P39G8YSJ2V9WTFNQSKNEHD9Q&contentType=json`;
-    return this.http.get<VCRoot>(url);
-  }
-
-  convertWeatherDaysToWidget(days: Array<Day>): Array<WeatherInfo> {
-    return days.map(d => ({
-      date: d.datetime,
-      precip: d.precip,
-      cloudClass: WeatherAdapter.getCloudClass()
-    }));
+  formatDate(date: Date) {
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Add 1 as months are zero-based
+    const year = date.getFullYear();
+    return `${year}-${month}-${day}`;
   }
 
 }

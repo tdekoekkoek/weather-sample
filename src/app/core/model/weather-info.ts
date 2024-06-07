@@ -1,6 +1,8 @@
 
 export type WeatherInfo = {
-  date: string;
+  datetime: string;
   precip: number;
   cloudClass: string;
+  tempmin: number;
+  tempmax: number;
 }

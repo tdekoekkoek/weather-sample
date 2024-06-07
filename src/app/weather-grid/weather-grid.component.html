@@ -13,7 +13,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr class="odd:bg-white even:bg-gray-100" *ngFor="let x of weather.days">
+                    <tr class="odd:bg-white even:bg-gray-100" *ngFor="let x of weatherDays">
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{x.datetime | date: 'longDate'}}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{x.precip}}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{x.cloudcover}}</td>
